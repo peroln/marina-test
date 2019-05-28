@@ -9,6 +9,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     use Notifiable;
+    const ROLE_ADMINISTRATOR = 'administrator';
+    const ROLE_CUSTOMER = 'customer';
 
     /**
      * The attributes that are mass assignable.
@@ -36,4 +38,23 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    /**
+     * The roles that belong to the user.
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function roles()
+    {
+        return $this->belongsToMany('App\Role', 'users_roles');
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAdmin(){
+
+      return  $this->roles()->pluck('name')->contains(self::ROLE_ADMINISTRATOR);
+
+    }
+
 }
