@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Company;
+use App\Http\Requests\StoreCompany;
+use App\Http\Requests\UpdateCompany;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Event;
+use Yajra\DataTables\Facades\DataTables;
 
 class CompanyController extends Controller
 {
@@ -14,7 +18,8 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        //
+        $data = Company::all();
+        return view('company.index', compact('data'));
     }
 
     /**
@@ -24,7 +29,7 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        //
+        return view('company.create');
     }
 
     /**
@@ -33,9 +38,19 @@ class CompanyController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCompany $request, Company $company)
     {
-        //
+        $company->fill($request->all());
+        if (request()->hasFile('logo'))
+        {
+            $company->logo = Company::saveLogo();
+        }
+        try{
+            $company->save();
+            return redirect()->route('company.index');
+        }catch(\Exception $e){
+            return back()->withError($e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -57,7 +72,7 @@ class CompanyController extends Controller
      */
     public function edit(Company $company)
     {
-        //
+        return view('company.edit', compact(['company']));
     }
 
     /**
@@ -67,9 +82,20 @@ class CompanyController extends Controller
      * @param  \App\Company  $company
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Company $company)
+    public function update(UpdateCompany $request, Company $company)
     {
-        //
+        $company->fill($request->all());
+        if (request()->hasFile('logo'))
+        {
+           $company->logo = Company::saveLogo();
+        }
+
+        try{
+            $company->save();
+            return redirect()->route('company.index');
+        }catch(\Exception $e){
+            return back()->withError($e->getMessage())->withInput();
+        }
     }
 
     /**
@@ -80,6 +106,22 @@ class CompanyController extends Controller
      */
     public function destroy(Company $company)
     {
-        //
+        try{
+            $company->delete();
+            return back();
+        }catch(\Exception $e){
+            return back()->withError($e->getMessage())->withInput();
+        }
+    }
+
+    public static function boot() {
+        parent::boot();
+
+        static::created(function($item) {
+
+            Event::fire('item.created', $item);
+
+        });
+
     }
 }

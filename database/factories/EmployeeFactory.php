@@ -7,9 +7,9 @@ use Faker\Generator as Faker;
 
 $factory->define(Employee::class, function (Faker $faker) {
     return [
-        'First name' => $faker->firstName,
-        'last name' => $faker->lastName,
-        'Company' => function(){
+        'first_name' => $faker->firstName,
+        'last_name' => $faker->lastName,
+        'company_id' => function(){
         return factory(App\Company::class)->create()->id;
         },
         'email' => $faker->email,

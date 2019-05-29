@@ -2,6 +2,9 @@
 
 namespace App\Providers;
 
+use App\Company;
+use App\Jobs\SendNotificationNewCompany;
+use Illuminate\Queue\Jobs\Job;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -29,6 +32,9 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        //
+        Company::created(function($company)
+        {
+            dispatch(new SendNotificationNewCompany($company));
+        });
     }
 }
