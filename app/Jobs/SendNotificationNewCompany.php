@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Company;
+use App\Mail\NotificationCreateNewCompanyEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Queue\InteractsWithQueue;
@@ -33,18 +34,8 @@ class SendNotificationNewCompany implements ShouldQueue
      */
     public function handle()
     {
-try{
-    Mail::send('emails.notification', [
-        'company' => $this->company
-    ] , function($message){
-        $mail_admin = env('MAIL_ADMIN');
-        $message->from($this->company->email, $this->company->name);
-        $message->to($mail_admin)->subject('New company');
-    });
-}catch(\Exception $e){
-    dd($e->getMessage());
-}
-
+        $email = new NotificationCreateNewCompanyEmail($this->company);
+        Mail::to(env('MAIL_ADMIN'))->send($email);
 
     }
 }
