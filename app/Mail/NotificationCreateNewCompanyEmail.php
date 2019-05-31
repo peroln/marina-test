@@ -8,7 +8,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
-class NotificationCreateNewCompanyEmail extends Mailable
+class NotificationCreateNewCompanyEmail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
     private $company;
@@ -32,4 +32,5 @@ class NotificationCreateNewCompanyEmail extends Mailable
     {
         return $this->view('emails.newCompany',['company' => $this->company]);
     }
+
 }

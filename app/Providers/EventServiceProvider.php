@@ -21,6 +21,9 @@ class EventServiceProvider extends ServiceProvider
         Registered::class => [
             SendEmailVerificationNotification::class,
         ],
+        'App\Events\CompanyCreated' => [
+            'App\Listeners\SendCreatedCompanyNotification',
+        ]
     ];
 
     /**
@@ -32,9 +35,9 @@ class EventServiceProvider extends ServiceProvider
     {
         parent::boot();
 
-        Company::created(function($company)
+       /* Company::created(function($company)
         {
             dispatch(new SendNotificationNewCompany($company));
-        });
+        });*/
     }
 }

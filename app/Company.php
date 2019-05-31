@@ -2,6 +2,7 @@
 
 namespace App;
 
+use App\Events\CompanyCreated;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
@@ -10,6 +11,9 @@ use Intervention\Image\Facades\Image;
 class Company extends Model
 {
     protected $fillable = ['name','website','email'];
+    protected $dispatchesEvents = [
+        'created' => CompanyCreated::class,
+    ];
 
     static function saveLogo(){
         $image = request()->file('logo');
